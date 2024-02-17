@@ -1,0 +1,7 @@
+/node_modules
+/public/assets/background/*.png
+!/public/assets/background/frame.png
+/dist
+
+.env
+.env*.local

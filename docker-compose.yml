@@ -1,0 +1,22 @@
+version: '3.1'
+services:
+  mongodb:
+    image: mongo:4.4.6
+    environment:
+      #   # provide your credentials here
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=1234567
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+  rd-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+    restart: unless-stopped
