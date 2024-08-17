@@ -10,6 +10,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.633.0",
     "@types/jimp": "^0.2.28",
     "@types/mongoose": "^5.11.97",
     "@types/pngjs": "^6.0.4",

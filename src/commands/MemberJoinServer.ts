@@ -9,6 +9,9 @@ import { Command } from "../Command";
 import { downloadImage } from "../utils/downloadImage";
 import path from "path";
 import ServerInfoModel from "../database/models/serverInfo";
+import axios from "axios";
+import { s3 } from "../../src/utils/S3-Client";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export const JoinImage: Command = {
   name: "set",
@@ -46,12 +49,16 @@ export const JoinImage: Command = {
           const imageUrl = imageOption.attachment?.proxyURL as string;
           console.log(`Received join image: ${imageUrl}`);
           const dateTimestamp = new Date().getTime().toString();
-          const image = await downloadImage(
-            imageUrl,
-            "../../public/assets/background/",
-            dateTimestamp
-          );
-          if (image) {
+          // const image = await downloadImage(
+          //   imageUrl,
+          //   "../../public/assets/background/",
+          //   dateTimestamp
+          // );
+          const responseImageBuffer = await axios.get(imageUrl, { responseType: "arraybuffer" });
+          const imageBuffer = Buffer.from(responseImageBuffer.data, "binary");
+
+          if (responseImageBuffer) {
+            
             const serverInfo = await ServerInfoModel.findOne({
               serverId: interaction.guildId,
             });
@@ -64,11 +71,24 @@ export const JoinImage: Command = {
               });
               await newServerInfo.save();
             } else {
+              await s3.send(
+                new DeleteObjectCommand({
+                  Bucket: "banner-mhoo-bot",
+                  Key: serverInfo.joinImageName,
+                }),
+              );
               serverInfo.welcomeChannelId = interaction.options.get("channel")
                 ?.value as string;
               serverInfo.joinImageName = `${dateTimestamp}.png`;
               await serverInfo.save();
             }
+            await s3.send(
+              new PutObjectCommand({
+                Bucket: "banner-mhoo-bot",
+                Key: `${dateTimestamp}.png`,
+                Body: imageBuffer,
+              }),
+            );
             await interaction.followUp("Join image set successfully!");
           }
         } else {

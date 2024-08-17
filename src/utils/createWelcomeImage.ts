@@ -4,6 +4,9 @@ import Jimp from "jimp";
 import axios from "axios";
 import { PNG } from "pngjs";
 import sharp from "sharp";
+import { s3 } from "./S3-Client";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { Readable } from "stream";
 
 async function downloadImage(url: string): Promise<Buffer> {
   const response = await axios.get(url, { responseType: "arraybuffer" });
@@ -85,9 +88,14 @@ export async function createWelcomeImage(
       );
 
       const context = canvas.getContext("2d");
-      const background = await loadImage(
-        path.join(__dirname, `../../public/assets/background/${joinImageName}`)
+      const backgroundS3 = await s3.send(
+        new GetObjectCommand({
+          Bucket: "banner-mhoo-bot",
+          Key: joinImageName,
+        })
       );
+      const stream = backgroundS3.Body as Readable;
+      const background = await loadImage(Buffer.concat(await stream.toArray()));
       context.drawImage(background, 0, 0, canvas.width, canvas.height);
       var canvasCenterX = canvasWidth / 2;
       var canvasCenterY = canvasHeight / 2;
