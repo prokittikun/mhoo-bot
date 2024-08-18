@@ -9,7 +9,7 @@ import { Command } from "../Command";
 import path from "path";
 import ServerInfoModel from "../database/models/serverInfo";
 import axios from "axios";
-import { s3 } from "../../src/utils/S3-Client";
+import { s3 } from "../utils/S3-Client";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export const JoinImage: Command = {
