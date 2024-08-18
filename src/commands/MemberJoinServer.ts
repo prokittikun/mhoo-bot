@@ -6,7 +6,6 @@ import {
   GuildMember,
 } from "discord.js";
 import { Command } from "../Command";
-import { downloadImage } from "../utils/downloadImage";
 import path from "path";
 import ServerInfoModel from "../database/models/serverInfo";
 import axios from "axios";
@@ -57,7 +56,7 @@ export const JoinImage: Command = {
           const responseImageBuffer = await axios.get(imageUrl, { responseType: "arraybuffer" });
           const imageBuffer = Buffer.from(responseImageBuffer.data, "binary");
 
-          if (responseImageBuffer) {
+          if (imageBuffer) {
             
             const serverInfo = await ServerInfoModel.findOne({
               serverId: interaction.guildId,
