@@ -150,7 +150,7 @@ export async function createWelcomeImage(
       context.fillText(
         `พี่ดอมต้องการ "${randomWord}" คุณ`,
         canvasCenterX,
-        canvasCenterY + 190
+        canvasCenterY + 200
       );
 
       const buffer = canvas.toBuffer("image/png");
