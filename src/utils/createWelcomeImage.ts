@@ -1,5 +1,5 @@
 import { createCanvas, loadImage, registerFont } from "canvas";
-import path from "path";
+import path, { join } from "path";
 import Jimp from "jimp";
 import axios from "axios";
 import { PNG } from "pngjs";
@@ -131,8 +131,9 @@ export async function createWelcomeImage(
       context.shadowOffsetX = 2;
       context.shadowOffsetY = 2;
       context.fillText(displayName, canvasCenterX, canvasCenterY + 150);
+      const filePath = join(process.cwd(), 'public', 'assets', 'word.txt');
 
-      const fileContent = readFileSync("verbs.txt", "utf-8");
+      const fileContent = readFileSync(filePath, "utf-8");
       const words = fileContent
         .split("\n")
         .map((word) => word.trim())
