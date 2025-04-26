@@ -152,31 +152,38 @@ export async function createWelcomeImage(
       //   canvasCenterX,
       //   canvasCenterY + 200
       // );
-      const textBefore = 'พี่ดอมต้องการ "';
-      const textAfter = '" คุณ';
+      const mainText = 'พี่ดอมต้องการ "';
+      const afterText = '" คุณ';
 
-      // Measure text widths
-      const beforeWidth = context.measureText(textBefore).width;
+      // measure the width of texts to position correctly
+      const mainTextWidth = context.measureText(mainText).width;
       const randomWordWidth = context.measureText(randomWord).width;
 
-      // Starting X position (centered)
-      const startX =
+      // start drawing
+      let startX =
         canvasCenterX -
-        (beforeWidth + randomWordWidth + context.measureText(textAfter).width) /
+        (mainTextWidth +
+          randomWordWidth +
+          context.measureText(afterText).width) /
           2;
-      const y = canvasCenterY + 200;
 
-      // Draw first part (white)
+      // draw the first part (white)
       context.fillStyle = "white";
-      context.fillText(textBefore, startX, y);
+      context.fillText(mainText, startX, canvasCenterY + 200);
 
-      // Draw randomWord (red)
+      // move X position
+      startX += mainTextWidth;
+
+      // draw the random word (red)
       context.fillStyle = "red";
-      context.fillText(randomWord, startX + beforeWidth, y);
+      context.fillText(randomWord, startX, canvasCenterY + 200);
 
-      // Draw last part (white)
+      // move X position
+      startX += randomWordWidth;
+
+      // draw the last part (white)
       context.fillStyle = "white";
-      context.fillText(textAfter, startX + beforeWidth + randomWordWidth, y);
+      context.fillText(afterText, startX, canvasCenterY + 200);
 
       const buffer = canvas.toBuffer("image/png");
       resolve(buffer);
