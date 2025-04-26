@@ -131,7 +131,7 @@ export async function createWelcomeImage(
       context.shadowOffsetX = 2;
       context.shadowOffsetY = 2;
       context.fillText(displayName, canvasCenterX, canvasCenterY + 150);
-      const filePath = join(process.cwd(), 'public', 'assets', 'word.txt');
+      const filePath = join(process.cwd(), "public", "assets", "word.txt");
 
       const fileContent = readFileSync(filePath, "utf-8");
       const words = fileContent
@@ -140,18 +140,43 @@ export async function createWelcomeImage(
         .filter((word) => word.length > 0);
 
       const randomWord = words[Math.floor(Math.random() * words.length)];
-      context.font = "45px Kanit ExtraBold";
+      // context.font = "45px Kanit ExtraBold";
+      // context.fillStyle = "white";
+      // context.textAlign = "center";
+      // context.shadowColor = "rgba(0, 0, 0, 0.5)";
+      // context.shadowBlur = 5;
+      // context.shadowOffsetX = 2;
+      // context.shadowOffsetY = 2;
+      // context.fillText(
+      //   `พี่ดอมต้องการ "${randomWord}" คุณ`,
+      //   canvasCenterX,
+      //   canvasCenterY + 200
+      // );
+      const textBefore = 'พี่ดอมต้องการ "';
+      const textAfter = '" คุณ';
+
+      // Measure text widths
+      const beforeWidth = context.measureText(textBefore).width;
+      const randomWordWidth = context.measureText(randomWord).width;
+
+      // Starting X position (centered)
+      const startX =
+        canvasCenterX -
+        (beforeWidth + randomWordWidth + context.measureText(textAfter).width) /
+          2;
+      const y = canvasCenterY + 200;
+
+      // Draw first part (white)
       context.fillStyle = "white";
-      context.textAlign = "center";
-      context.shadowColor = "rgba(0, 0, 0, 0.5)";
-      context.shadowBlur = 5;
-      context.shadowOffsetX = 2;
-      context.shadowOffsetY = 2;
-      context.fillText(
-        `พี่ดอมต้องการ "${randomWord}" คุณ`,
-        canvasCenterX,
-        canvasCenterY + 200
-      );
+      context.fillText(textBefore, startX, y);
+
+      // Draw randomWord (red)
+      context.fillStyle = "red";
+      context.fillText(randomWord, startX + beforeWidth, y);
+
+      // Draw last part (white)
+      context.fillStyle = "white";
+      context.fillText(textAfter, startX + beforeWidth + randomWordWidth, y);
 
       const buffer = canvas.toBuffer("image/png");
       resolve(buffer);
