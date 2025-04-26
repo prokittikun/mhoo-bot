@@ -7,6 +7,7 @@ import sharp from "sharp";
 import { s3 } from "./S3-Client";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
+import { readFileSync } from "fs";
 
 async function downloadImage(url: string): Promise<Buffer> {
   const response = await axios.get(url, { responseType: "arraybuffer" });
@@ -130,6 +131,26 @@ export async function createWelcomeImage(
       context.shadowOffsetX = 2;
       context.shadowOffsetY = 2;
       context.fillText(displayName, canvasCenterX, canvasCenterY + 150);
+
+      const fileContent = readFileSync("verbs.txt", "utf-8");
+      const words = fileContent
+        .split("\n")
+        .map((word) => word.trim())
+        .filter((word) => word.length > 0);
+
+      const randomWord = words[Math.floor(Math.random() * words.length)];
+      context.font = "45px Kanit ExtraBold";
+      context.fillStyle = "white";
+      context.textAlign = "center";
+      context.shadowColor = "rgba(0, 0, 0, 0.5)";
+      context.shadowBlur = 5;
+      context.shadowOffsetX = 2;
+      context.shadowOffsetY = 2;
+      context.fillText(
+        `พี่ดอมต้องการ "${randomWord}" คุณ`,
+        canvasCenterX,
+        canvasCenterY + 190
+      );
 
       const buffer = canvas.toBuffer("image/png");
       resolve(buffer);
