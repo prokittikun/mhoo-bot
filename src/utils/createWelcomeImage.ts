@@ -152,38 +152,81 @@ export async function createWelcomeImage(
       //   canvasCenterX,
       //   canvasCenterY + 200
       // );
+      // const mainText = 'พี่ดอมต้องการ "';
+      // const afterText = '" คุณ';
+
+      // // measure the width of texts to position correctly
+      // const mainTextWidth = context.measureText(mainText).width;
+      // const randomWordWidth = context.measureText(randomWord).width;
+
+      // // start drawing
+      // let startX =
+      //   canvasCenterX -
+      //   (mainTextWidth +
+      //     randomWordWidth +
+      //     context.measureText(afterText).width) /
+      //     2;
+
+      // // draw the first part (white)
+      // context.fillStyle = "white";
+      // context.fillText(mainText, startX, canvasCenterY + 200);
+
+      // // move X position
+      // startX += mainTextWidth;
+
+      // // draw the random word (red)
+      // context.fillStyle = "red";
+      // context.fillText(randomWord, startX, canvasCenterY + 200);
+
+      // // move X position
+      // startX += randomWordWidth;
+
+      // // draw the last part (white)
+      // context.fillStyle = "white";
+      // context.fillText(afterText, startX, canvasCenterY + 200);
+      // Set font and styles first
+      context.font = "45px Kanit ExtraBold";
+      context.fillStyle = "white"; // default color
+      context.textAlign = "left"; // important for manual positioning!
+      context.shadowColor = "rgba(0, 0, 0, 0.5)";
+      context.shadowBlur = 5;
+      context.shadowOffsetX = 2;
+      context.shadowOffsetY = 2;
+
+      // Text parts
       const mainText = 'พี่ดอมต้องการ "';
       const afterText = '" คุณ';
 
-      // measure the width of texts to position correctly
+      // Random word is already chosen
+      // Example: const randomWord = "เพื่อน";
+
+      // Measure widths
       const mainTextWidth = context.measureText(mainText).width;
       const randomWordWidth = context.measureText(randomWord).width;
+      const afterTextWidth = context.measureText(afterText).width;
 
-      // start drawing
+      // Calculate starting X position to center the whole sentence
       let startX =
-        canvasCenterX -
-        (mainTextWidth +
-          randomWordWidth +
-          context.measureText(afterText).width) /
-          2;
+        canvasCenterX - (mainTextWidth + randomWordWidth + afterTextWidth) / 2;
+      const y = canvasCenterY + 200; // Y position for the text
 
-      // draw the first part (white)
+      // Draw first part (white)
       context.fillStyle = "white";
-      context.fillText(mainText, startX, canvasCenterY + 200);
+      context.fillText(mainText, startX, y);
 
-      // move X position
+      // Move X position
       startX += mainTextWidth;
 
-      // draw the random word (red)
+      // Draw randomWord (red)
       context.fillStyle = "red";
-      context.fillText(randomWord, startX, canvasCenterY + 200);
+      context.fillText(randomWord, startX, y);
 
-      // move X position
+      // Move X position
       startX += randomWordWidth;
 
-      // draw the last part (white)
+      // Draw last part (white)
       context.fillStyle = "white";
-      context.fillText(afterText, startX, canvasCenterY + 200);
+      context.fillText(afterText, startX, y);
 
       const buffer = canvas.toBuffer("image/png");
       resolve(buffer);
