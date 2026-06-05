@@ -2,6 +2,7 @@ import { CommandInteraction, Client, ApplicationCommandType, AttachmentBuilder }
 import { Command } from "../Command";
 import ServerInfoModel from "../database/models/serverInfo";
 import { createWelcomeImage } from "../utils/createWelcomeImage";
+import { getWordForServer } from "../database/services/wordService";
 
 export const ExampleWelcome: Command = {
   name: "example",
@@ -24,10 +25,14 @@ export const ExampleWelcome: Command = {
         interaction.user.displayAvatarURL({ extension: "png", size: 256 }) ??
         "https://cdn.discordapp.com/embed/avatars/0.png";
 
+      const word = await getWordForServer(interaction.guildId!);
       const imageBuffer = await createWelcomeImage(
         avatarUrl,
         interaction.user.displayName,
-        serverInfo.joinImageName
+        serverInfo.joinImageName,
+        word,
+        serverInfo.mainText,
+        serverInfo.afterText
       );
 
       const attachment = new AttachmentBuilder(imageBuffer, {

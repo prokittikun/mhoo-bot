@@ -2,7 +2,6 @@ import { createCanvas, loadImage, registerFont } from "canvas";
 import path, { join } from "path";
 import Jimp from "jimp";
 import axios from "axios";
-import { PNG } from "pngjs";
 import sharp from "sharp";
 import { s3 } from "./S3-Client";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
@@ -66,6 +65,9 @@ export async function createWelcomeImage(
   memberProfile: string,
   displayName: string,
   joinImageName: string,
+  wordOverride?: string,
+  mainText?: string,
+  afterText?: string,
   outputPath?: string
 ): Promise<Buffer> {
   // const image1 = loadImage(memberProfile);
@@ -131,15 +133,14 @@ export async function createWelcomeImage(
       context.shadowOffsetX = 2;
       context.shadowOffsetY = 2;
       context.fillText(displayName, canvasCenterX, canvasCenterY + 150);
-      const filePath = join(process.cwd(), "public", "assets", "word.txt");
-
-      const fileContent = readFileSync(filePath, "utf-8");
-      const words = fileContent
-        .split("\n")
-        .map((word) => word.trim())
-        .filter((word) => word.length > 0);
-
-      const randomWord = words[Math.floor(Math.random() * words.length)];
+      const randomWord = wordOverride ?? (() => {
+        const filePath = join(process.cwd(), "public", "assets", "word.txt");
+        const words = readFileSync(filePath, "utf-8")
+          .split("\n")
+          .map((w) => w.trim())
+          .filter((w) => w.length > 0);
+        return words[Math.floor(Math.random() * words.length)];
+      })();
       // context.font = "45px Kanit ExtraBold";
       // context.fillStyle = "white";
       // context.textAlign = "center";
@@ -184,49 +185,36 @@ export async function createWelcomeImage(
       // // draw the last part (white)
       // context.fillStyle = "white";
       // context.fillText(afterText, startX, canvasCenterY + 200);
-      // Set font and styles first
       context.font = "45px Kanit ExtraBold";
-      context.fillStyle = "white"; // default color
-      context.textAlign = "left"; // important for manual positioning!
+      context.textAlign = "left";
       context.shadowColor = "rgba(0, 0, 0, 0.5)";
       context.shadowBlur = 5;
       context.shadowOffsetX = 2;
       context.shadowOffsetY = 2;
 
-      // Text parts
-      const mainText = 'พี่ดอมต้องการ "';
-      const afterText = '" คุณ';
+      // quotes always wrap randomWord — configurable text excludes them
+      const resolvedMainText = (mainText ?? 'พี่ดอมต้องการ') + ' "';
+      const resolvedAfterText = '" ' + (afterText ?? 'คุณ');
+      const quotedWord = randomWord;
 
-      // Random word is already chosen
-      // Example: const randomWord = "เพื่อน";
+      const mainTextWidth = context.measureText(resolvedMainText).width;
+      const randomWordWidth = context.measureText(quotedWord).width;
+      const afterTextWidth = context.measureText(resolvedAfterText).width;
 
-      // Measure widths
-      const mainTextWidth = context.measureText(mainText).width;
-      const randomWordWidth = context.measureText(randomWord).width;
-      const afterTextWidth = context.measureText(afterText).width;
-
-      // Calculate starting X position to center the whole sentence
       let startX =
         canvasCenterX - (mainTextWidth + randomWordWidth + afterTextWidth) / 2;
-      const y = canvasCenterY + 200; // Y position for the text
+      const y = canvasCenterY + 200;
 
-      // Draw first part (white)
       context.fillStyle = "white";
-      context.fillText(mainText, startX, y);
-
-      // Move X position
+      context.fillText(resolvedMainText, startX, y);
       startX += mainTextWidth;
 
-      // Draw randomWord (red)
       context.fillStyle = "red";
-      context.fillText(randomWord, startX, y);
-
-      // Move X position
+      context.fillText(quotedWord, startX, y);
       startX += randomWordWidth;
 
-      // Draw last part (white)
       context.fillStyle = "white";
-      context.fillText(afterText, startX, y);
+      context.fillText(resolvedAfterText, startX, y);
 
       const buffer = canvas.toBuffer("image/png");
       resolve(buffer);

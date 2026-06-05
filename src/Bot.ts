@@ -6,6 +6,7 @@ import { GuildMember } from "discord.js"; // Import the necessary event type
 import connectDB from "./database/services/database.service";
 import { createWelcomeImage } from "./utils/createWelcomeImage";
 import ServerInfoModel from "./database/models/serverInfo";
+import { getWordForServer } from "./database/services/wordService";
 import path from "path";
 config();
 console.log("Bot is starting...");
@@ -26,15 +27,19 @@ client.on("guildMemberAdd", async (member) => {
     : memberInfo.defaultAvatarURL;
 
   const serverInfo = await ServerInfoModel.findOne({serverId: member.guild.id});
-  if(!serverInfo){
+  if(!serverInfo?.joinImageName || !serverInfo?.welcomeChannelId){
     return;
   }
+  const word = await getWordForServer(member.guild.id);
   const result = await createWelcomeImage(
     imageURL!,
     memberInfo.username,
-    serverInfo.joinImageName
+    serverInfo.joinImageName,
+    word,
+    serverInfo.mainText,
+    serverInfo.afterText
   );
-  
+
   const channel = client.channels.cache.get(serverInfo.welcomeChannelId);
   if(!channel) return;
   const welcomeChannel = channel as TextChannel;
