@@ -22,11 +22,13 @@
     "jimp": "^0.22.10",
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.2",
+    "node-cron": "^4.2.1",
     "pngjs": "^7.0.0",
     "sharp": "^0.33.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "@types/node-cron": "^3.0.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }

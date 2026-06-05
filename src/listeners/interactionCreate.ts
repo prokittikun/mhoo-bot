@@ -44,7 +44,7 @@ export default (client: Client): void => {
 };
 
 const handleAutocomplete = async (_interaction: AutocompleteInteraction): Promise<void> => {
-  // kept for any future autocomplete commands
+  // reserved for future autocomplete commands
 };
 
 const handleSelectMenu = async (interaction: StringSelectMenuInteraction): Promise<void> => {
