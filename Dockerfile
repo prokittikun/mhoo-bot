@@ -1,5 +1,8 @@
 FROM node:20.11.1
 
+ARG GIT_COMMIT=unknown
+ENV GIT_COMMIT=${GIT_COMMIT}
+
 RUN apt-get update && apt-get install -y \
     build-essential \
     libcairo2-dev \
