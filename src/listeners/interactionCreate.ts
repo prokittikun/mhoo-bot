@@ -17,6 +17,7 @@ import { Commands } from "../Commands";
 import { listWords, removeWord, addWord } from "../database/services/wordService";
 import { buildRemoveWordComponents } from "../commands/RemoveWord";
 import { buildEditWordComponents } from "../commands/EditWord";
+import { buildHelpEmbed, buildLangRow } from "../commands/Help";
 
 export default (client: Client): void => {
   client.on("interactionCreate", async (interaction: Interaction) => {
@@ -111,6 +112,14 @@ const handleButton = async (interaction: ButtonInteraction): Promise<void> => {
     const words = await listWords(serverId);
     const components = buildEditWordComponents(words, page);
     await interaction.update({ content: "Select a word to edit:", components });
+    return;
+  }
+
+  if (action === "help_lang") {
+    const lang = parts[1] as "en" | "th";
+    const embed = buildHelpEmbed(lang, interaction.client);
+    const row = buildLangRow(lang);
+    await interaction.update({ embeds: [embed], components: [row] });
     return;
   }
 };

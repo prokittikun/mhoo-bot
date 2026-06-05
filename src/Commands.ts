@@ -9,6 +9,7 @@ import { ListWords } from "./commands/ListWords";
 import { SetWordMode } from "./commands/SetWordMode";
 import { Reset } from "./commands/Reset";
 import { SetText } from "./commands/SetText";
+import { Help } from "./commands/Help";
 
 export const Commands: Command[] = [
   Ping,
@@ -20,5 +21,6 @@ export const Commands: Command[] = [
   ListWords,
   SetWordMode,
   SetText,
+  Help,
   Reset,
 ];
