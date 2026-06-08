@@ -11,6 +11,7 @@ import { Reset } from "./commands/Reset";
 import { SetText } from "./commands/SetText";
 import { Help } from "./commands/Help";
 import { Val } from "./commands/Val";
+import { Music } from "./commands/Music";
 
 export const Commands: Command[] = [
   Ping,
@@ -24,5 +25,6 @@ export const Commands: Command[] = [
   SetText,
   Help,
   Val,
+  Music,
   Reset,
 ];

@@ -6,17 +6,23 @@ import connectDB from "./database/services/database.service";
 import { createWelcomeImage } from "./utils/createWelcomeImage";
 import ServerInfoModel from "./database/models/serverInfo";
 import { getWordForServer } from "./database/services/wordService";
+import { initPlayDl } from "./services/playDlService";
 
 config();
 console.log("Bot is starting...");
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildVoiceStates,
+  ],
 });
 
 ready(client);
 interactionCreate(client);
 connectDB();
+initPlayDl().catch(console.error);
 
 client.on("guildMemberAdd", async (member) => {
   const memberInfo = member.user;
