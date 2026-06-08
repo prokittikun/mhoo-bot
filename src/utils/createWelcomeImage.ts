@@ -38,7 +38,7 @@ async function createCircularImageWithFrame(
     );
     const width = frame.getWidth();
     const height = frame.getHeight();
-    image.resize(width, height);
+    image.resize(width, height, Jimp.RESIZE_BICUBIC);
     // frame.resize(width, height);
 
     const radius = Math.min(width, height) / 2;

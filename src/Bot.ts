@@ -29,7 +29,7 @@ initPlayDl().catch(console.error);
 client.on("guildMemberAdd", async (member) => {
   const memberInfo = member.user;
 
-  const imageURL = memberInfo.avatarURL() ?? memberInfo.defaultAvatarURL;
+  const imageURL = memberInfo.displayAvatarURL({ size: 512, extension: 'png' });
 
   const serverInfo = await ServerInfoModel.findOne({ serverId: member.guild.id });
   if (!serverInfo?.joinImageName || !serverInfo?.welcomeChannelId) return;

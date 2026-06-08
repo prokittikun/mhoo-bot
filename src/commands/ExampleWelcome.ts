@@ -21,9 +21,7 @@ export const ExampleWelcome: Command = {
         return;
       }
 
-      const avatarUrl =
-        interaction.user.displayAvatarURL({ extension: "png", size: 256 }) ??
-        "https://cdn.discordapp.com/embed/avatars/0.png";
+      const avatarUrl = interaction.user.displayAvatarURL({ extension: "png", size: 512 });
 
       const word = await getWordForServer(interaction.guildId!);
       const imageBuffer = await createWelcomeImage(
