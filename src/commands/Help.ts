@@ -64,7 +64,10 @@ export function buildHelpEmbed(lang: "en" | "th", client: Client): EmbedBuilder 
         },
         {
           name: "🏓 อื่นๆ",
-          value: "`/ping` — ตรวจสอบสถานะบอท",
+          value: [
+            "`/ping` — ตรวจสอบสถานะบอท",
+            "`/invite` — รับลิงก์เชิญบอทไปยังเซิร์ฟเวอร์ของคุณ",
+          ].join("\n"),
         },
         {
           name: "💡 รูปแบบข้อความในภาพ",
@@ -119,7 +122,10 @@ export function buildHelpEmbed(lang: "en" | "th", client: Client): EmbedBuilder 
       },
       {
         name: "🏓 Other",
-        value: "`/ping` — Check if the bot is alive",
+        value: [
+          "`/ping` — Check if the bot is alive",
+          "`/invite` — Get the invite link to add this bot to your server",
+        ].join("\n"),
       },
       {
         name: "💡 Welcome Image Text Format",

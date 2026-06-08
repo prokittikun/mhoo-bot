@@ -10,6 +10,7 @@ import { SetWordMode } from "./commands/SetWordMode";
 import { Reset } from "./commands/Reset";
 import { SetText } from "./commands/SetText";
 import { Help } from "./commands/Help";
+import { Invite } from "./commands/Invite";
 import { Val } from "./commands/Val";
 import { Music } from "./commands/Music";
 
@@ -24,6 +25,7 @@ export const Commands: Command[] = [
   SetWordMode,
   SetText,
   Help,
+  Invite,
   Val,
   Music,
   Reset,
