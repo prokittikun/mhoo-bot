@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits, TextChannel } from "discord.js";
 import { config } from "dotenv";
 import ready from "./listeners/ready";
 import interactionCreate from "./listeners/interactionCreate";
+import voiceStateUpdate from "./listeners/voiceStateUpdate";
 import connectDB from "./database/services/database.service";
 import { createWelcomeImage } from "./utils/createWelcomeImage";
 import ServerInfoModel from "./database/models/serverInfo";
@@ -21,6 +22,7 @@ const client = new Client({
 
 ready(client);
 interactionCreate(client);
+voiceStateUpdate(client);
 connectDB();
 initPlayDl().catch(console.error);
 
