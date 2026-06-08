@@ -9,7 +9,7 @@ import {
 import { Command } from '../Command';
 import { MusicPlayer } from '../music/MusicPlayer';
 import { getPlayer } from '../music/MusicManager';
-import { buildNowPlayingEmbed, buildQueueEmbed } from '../music/musicEmbeds';
+import { buildNowPlayingEmbed, buildQueueEmbed, buildControlRow } from '../music/musicEmbeds';
 import { resolveQuery } from '../services/playDlService';
 
 export const Music: Command = {
@@ -176,10 +176,10 @@ async function handlePlay(interaction: CommandInteraction, player: MusicPlayer):
   if (wasIdle) {
     await player.startPlaying();
     if (tracks.length === 1) {
-      await interaction.editReply({ content: '', embeds: [buildNowPlayingEmbed(tracks[0])] });
+      await interaction.editReply(`▶️ Now playing: **${tracks[0].title}**`);
     } else {
       await interaction.editReply(
-        `▶️ Playing **${tracks[0].title}** + queued **${tracks.length - 1}** more tracks.`,
+        `▶️ Now playing: **${tracks[0].title}** + queued **${tracks.length - 1}** more tracks.`,
       );
     }
   } else {
@@ -235,7 +235,11 @@ async function handleNp(interaction: CommandInteraction, player: MusicPlayer): P
     await interaction.editReply('❌ Nothing is playing.');
     return;
   }
-  await interaction.editReply({ content: '', embeds: [buildNowPlayingEmbed(player.current)] });
+  await interaction.editReply({
+    content: '',
+    embeds: [buildNowPlayingEmbed(player.current)],
+    components: [buildControlRow(player.paused, player.loopMode, player.queue.length)],
+  });
 }
 
 async function handleLoop(interaction: CommandInteraction, player: MusicPlayer): Promise<void> {

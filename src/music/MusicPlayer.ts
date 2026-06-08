@@ -11,13 +11,13 @@ import {
   NoSubscriberBehavior,
   StreamType,
 } from '@discordjs/voice';
-import { VoiceBasedChannel, TextChannel } from 'discord.js';
+import { Message, TextChannel, VoiceBasedChannel } from 'discord.js';
 import { stream as playStream } from 'play-dl';
 import { spawn, ChildProcess } from 'child_process';
-import { Track } from './Track';
-import { buildNowPlayingEmbed } from './musicEmbeds';
+import { LoopMode, Track } from './Track';
+import { buildControlRow, buildNowPlayingEmbed } from './musicEmbeds';
 
-export type LoopMode = 'off' | 'song' | 'queue';
+export { LoopMode };
 
 export class MusicPlayer {
   public queue: Track[] = [];
@@ -32,6 +32,7 @@ export class MusicPlayer {
   private skipRequested = false;
   private idleTimer: NodeJS.Timeout | null = null;
   private activeProcs: ChildProcess[] = [];
+  private npMessage: Message | null = null;
 
   constructor(private guildId: string) {
     this.player = createAudioPlayer({
@@ -80,7 +81,33 @@ export class MusicPlayer {
 
   async startPlaying(): Promise<void> {
     if (!this.current) this.current = this.queue.shift() ?? null;
-    if (this.current) await this.playCurrent(false);
+    if (this.current) await this.playCurrent(true);
+  }
+
+  async updateNpMessage(): Promise<void> {
+    if (!this.npMessage || !this.current) return;
+    try {
+      await this.npMessage.edit({
+        embeds: [buildNowPlayingEmbed(this.current)],
+        components: [buildControlRow(this.paused, this.loopMode, this.queue.length)],
+      });
+    } catch {}
+  }
+
+  private async sendNowPlaying(track: Track): Promise<void> {
+    // Disable buttons on previous NP message
+    if (this.npMessage) {
+      const old = this.npMessage;
+      this.npMessage = null;
+      old.edit({ components: [] }).catch(() => {});
+    }
+    if (!this.textChannel) return;
+    try {
+      this.npMessage = await this.textChannel.send({
+        embeds: [buildNowPlayingEmbed(track)],
+        components: [buildControlRow(this.paused, this.loopMode, this.queue.length)],
+      });
+    } catch {}
   }
 
   private killActiveProcs(): void {
@@ -96,11 +123,9 @@ export class MusicPlayer {
     this.killActiveProcs();
 
     try {
-      console.log(`[Music:${this.guildId}] Streaming: "${this.current.title}"`);
       let resource: AudioResource;
 
       if (this.current.platform === 'youtube') {
-        // Request WebM/Opus directly — skips ffmpeg + opus encoder entirely
         const ytdlp = spawn('yt-dlp', [
           this.current.url,
           '-f', '251/bestaudio[ext=webm][acodec=opus]/bestaudio[ext=webm]',
@@ -130,9 +155,7 @@ export class MusicPlayer {
       this.player.play(resource);
       this.paused = false;
 
-      if (announce) {
-        this.textChannel?.send({ embeds: [buildNowPlayingEmbed(this.current)] }).catch(() => {});
-      }
+      if (announce) await this.sendNowPlaying(this.current);
     } catch (err: any) {
       console.error(`[Music:${this.guildId}] Stream error:`, err?.message);
       this.textChannel?.send(`⚠️ Cannot stream **${this.current?.title}**, skipping.`).catch(() => {});
@@ -225,6 +248,12 @@ export class MusicPlayer {
   cleanup(): void {
     this.killActiveProcs();
     this.clearIdleTimer();
+    // Disable buttons on current NP message
+    if (this.npMessage) {
+      const msg = this.npMessage;
+      this.npMessage = null;
+      msg.edit({ components: [] }).catch(() => {});
+    }
     this.skipRequested = true;
     this.player.stop();
     this.queue = [];

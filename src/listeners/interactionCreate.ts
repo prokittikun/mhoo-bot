@@ -18,6 +18,9 @@ import { listWords, removeWord, addWord } from "../database/services/wordService
 import { buildRemoveWordComponents } from "../commands/RemoveWord";
 import { buildEditWordComponents } from "../commands/EditWord";
 import { buildHelpEmbed, buildLangRow } from "../commands/Help";
+import { getPlayer } from "../music/MusicManager";
+import { LoopMode } from "../music/Track";
+import { buildNowPlayingEmbed, buildControlRow } from "../music/musicEmbeds";
 
 export default (client: Client): void => {
   client.on("interactionCreate", async (interaction: Interaction) => {
@@ -120,6 +123,63 @@ const handleButton = async (interaction: ButtonInteraction): Promise<void> => {
     const embed = buildHelpEmbed(lang, interaction.client);
     const row = buildLangRow(lang);
     await interaction.update({ embeds: [embed], components: [row] });
+    return;
+  }
+
+  if (action === "music_pause") {
+    const player = getPlayer(serverId);
+    if (player.paused) player.resume(); else player.pause();
+    if (player.current) {
+      await interaction.update({
+        embeds: [buildNowPlayingEmbed(player.current)],
+        components: [buildControlRow(player.paused, player.loopMode, player.queue.length)],
+      });
+    } else {
+      await interaction.deferUpdate();
+    }
+    return;
+  }
+
+  if (action === "music_skip") {
+    const player = getPlayer(serverId);
+    player.skip();
+    await interaction.update({ components: [] });
+    return;
+  }
+
+  if (action === "music_stop") {
+    const player = getPlayer(serverId);
+    player.stop();
+    await interaction.update({ components: [] });
+    return;
+  }
+
+  if (action === "music_loop") {
+    const player = getPlayer(serverId);
+    const cycle: LoopMode[] = ['off', 'song', 'queue'];
+    player.loopMode = cycle[(cycle.indexOf(player.loopMode) + 1) % cycle.length];
+    if (player.current) {
+      await interaction.update({
+        embeds: [buildNowPlayingEmbed(player.current)],
+        components: [buildControlRow(player.paused, player.loopMode, player.queue.length)],
+      });
+    } else {
+      await interaction.deferUpdate();
+    }
+    return;
+  }
+
+  if (action === "music_shuffle") {
+    const player = getPlayer(serverId);
+    player.shuffle();
+    if (player.current) {
+      await interaction.update({
+        embeds: [buildNowPlayingEmbed(player.current)],
+        components: [buildControlRow(player.paused, player.loopMode, player.queue.length)],
+      });
+    } else {
+      await interaction.deferUpdate();
+    }
     return;
   }
 };

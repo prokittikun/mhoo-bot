@@ -1,3 +1,5 @@
+export type LoopMode = 'off' | 'song' | 'queue';
+
 export interface Track {
   title: string;
   url: string;

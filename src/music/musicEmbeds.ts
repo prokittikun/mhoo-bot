@@ -1,5 +1,5 @@
-import { EmbedBuilder } from 'discord.js';
-import { Track, formatDuration } from './Track';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
+import { LoopMode, Track, formatDuration } from './Track';
 
 export function buildNowPlayingEmbed(track: Track): EmbedBuilder {
   return new EmbedBuilder()
@@ -12,6 +12,41 @@ export function buildNowPlayingEmbed(track: Track): EmbedBuilder {
       { name: 'Requested by', value: track.requestedBy, inline: true },
       { name: 'Platform', value: capitalize(track.platform), inline: true },
     );
+}
+
+export function buildControlRow(
+  paused: boolean,
+  loopMode: LoopMode,
+  queueLength: number,
+): ActionRowBuilder<ButtonBuilder> {
+  const loopLabels: Record<LoopMode, string> = {
+    off: '🔁 Loop',
+    song: '🔂 Song',
+    queue: '🔁 Queue',
+  };
+  return new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setCustomId('music_pause')
+      .setLabel(paused ? '▶️ Resume' : '⏸️ Pause')
+      .setStyle(paused ? ButtonStyle.Success : ButtonStyle.Primary),
+    new ButtonBuilder()
+      .setCustomId('music_skip')
+      .setLabel('⏭️ Skip')
+      .setStyle(ButtonStyle.Secondary),
+    new ButtonBuilder()
+      .setCustomId('music_stop')
+      .setLabel('⏹️ Stop')
+      .setStyle(ButtonStyle.Danger),
+    new ButtonBuilder()
+      .setCustomId('music_loop')
+      .setLabel(loopLabels[loopMode])
+      .setStyle(loopMode === 'off' ? ButtonStyle.Secondary : ButtonStyle.Primary),
+    new ButtonBuilder()
+      .setCustomId('music_shuffle')
+      .setLabel('🔀 Shuffle')
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(queueLength === 0),
+  );
 }
 
 export function buildQueueEmbed(current: Track | null, queue: Track[], loopMode: string): EmbedBuilder {
