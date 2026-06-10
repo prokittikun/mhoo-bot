@@ -23,7 +23,9 @@ export const Invite: Command = {
     const embed = new EmbedBuilder()
       .setColor(0x5865f2)
       .setTitle('➕ Add MHOO Bot to your server')
-      .setDescription(`[Click here to invite](${link})`)
+      .setDescription(
+        `[Click here to invite](${link})\n\n🌐 **Website:** https://mhoo-bot.kittikun.dev/`,
+      )
       .setThumbnail(client.user?.displayAvatarURL() ?? null);
 
     await interaction.editReply({ embeds: [embed] });

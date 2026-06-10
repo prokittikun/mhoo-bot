@@ -10,6 +10,7 @@ const ACTIVITIES: { name: string; type: ActivityType }[] = [
   { name: "/help — need help?", type: ActivityType.Watching },
   { name: "to your requests", type: ActivityType.Listening },
   { name: "/invite — add me to your server!", type: ActivityType.Playing },
+  { name: "mhoo-bot.kittikun.dev", type: ActivityType.Watching },
 ];
 
 export default (client: Client): void => {
