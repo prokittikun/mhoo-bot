@@ -11,6 +11,7 @@ import { Reset } from "./commands/Reset";
 import { SetText } from "./commands/SetText";
 import { Help } from "./commands/Help";
 import { Invite } from "./commands/Invite";
+import { Antispam } from "./commands/Antispam";
 import { Val } from "./commands/Val";
 import { Music } from "./commands/Music";
 
@@ -26,6 +27,7 @@ export const Commands: Command[] = [
   SetText,
   Help,
   Invite,
+  Antispam,
   Val,
   Music,
   Reset,

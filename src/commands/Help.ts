@@ -59,6 +59,18 @@ export function buildHelpEmbed(lang: "en" | "th", client: Client): EmbedBuilder 
           ].join("\n"),
         },
         {
+          name: "🛡️ ป้องกันสแปม  •  Admin เท่านั้น",
+          value: [
+            "`/antispam enable` / `/antispam disable` — เปิด/ปิดการป้องกันสแปมข้อความ (rate-limit)",
+            "`/antispam config` — ตั้งค่า threshold, window, action, timeout",
+            "`/antispam threat enabled:True` — เปิดตรวจจับเนื้อหาอันตราย",
+            "`/antispam threat action:delete_warn` — action เมื่อเจอภัยคุกคาม",
+            "`/antispam threat block-invites:True` — บล็อก invite link จากคนที่ไม่ใช่ Admin",
+            "`/antispam status` — ดูการตั้งค่าปัจจุบัน",
+            "ตรวจจับ: ฟิชชิ่ง, IP grabber, ลิงก์ปลอม, Nitro/Steam สแปม, crypto สแปม",
+          ].join("\n"),
+        },
+        {
           name: "👁 ดูตัวอย่าง",
           value: "`/example` — ดูตัวอย่างภาพต้อนรับด้วยการตั้งค่าปัจจุบัน",
         },
@@ -114,6 +126,18 @@ export function buildHelpEmbed(lang: "en" | "th", client: Client): EmbedBuilder 
           "`/music volume` `[1-100]` — Set volume",
           "`/music remove` `[position]` — Remove a track from queue",
           "`/music clear` — Clear the queue",
+        ].join("\n"),
+      },
+      {
+        name: "🛡️ Anti-Spam  •  Admin only",
+        value: [
+          "`/antispam enable` / `/antispam disable` — Enable/disable rate-limit spam protection",
+          "`/antispam config` — Set threshold, window, action, timeout duration",
+          "`/antispam threat enabled:True` — Enable content threat detection",
+          "`/antispam threat action:delete_warn` — Action when threat is detected",
+          "`/antispam threat block-invites:True` — Block Discord invites from non-admins",
+          "`/antispam status` — View current settings",
+          "Detects: phishing, IP grabbers, fake Nitro/Steam, crypto scams, @everyone bait",
         ].join("\n"),
       },
       {

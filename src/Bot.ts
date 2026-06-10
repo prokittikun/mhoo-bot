@@ -1,8 +1,9 @@
-import { Client, GatewayIntentBits, TextChannel } from "discord.js";
+import { Client, GatewayIntentBits, TextChannel, Partials } from "discord.js";
 import { config } from "dotenv";
 import ready from "./listeners/ready";
 import interactionCreate from "./listeners/interactionCreate";
 import voiceStateUpdate from "./listeners/voiceStateUpdate";
+import messageCreate from "./listeners/messageCreate";
 import connectDB from "./database/services/database.service";
 import { createWelcomeImage } from "./utils/createWelcomeImage";
 import ServerInfoModel from "./database/models/serverInfo";
@@ -17,12 +18,16 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
   ],
+  partials: [Partials.Message],
 });
 
 ready(client);
 interactionCreate(client);
 voiceStateUpdate(client);
+messageCreate(client);
 connectDB();
 initPlayDl().catch(console.error);
 
