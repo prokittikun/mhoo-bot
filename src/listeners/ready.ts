@@ -27,9 +27,15 @@ export default (client: Client): void => {
     const all = [versionActivity, ...ACTIVITIES];
     let index = 0;
 
+    const websiteStatus = {
+      name: "Custom Status",
+      type: ActivityType.Custom,
+      state: "🔗 mhoo-bot.kittikun.dev",
+    };
+
     const rotate = () => {
       client.user?.setPresence({
-        activities: [all[index % all.length]],
+        activities: [all[index % all.length], websiteStatus],
         status: "online",
       });
       index++;
